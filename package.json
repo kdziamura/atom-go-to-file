@@ -1,0 +1,15 @@
+{
+  "name": "go-to-file",
+  "main": "./lib/main",
+  "version": "0.1.0",
+  "description": "Go to file under cursor",
+  "keywords": [],
+  "activationCommands": {
+    "atom-workspace": "go-to-file:toggle"
+  },
+  "repository": "https://github.com/atom/go-to-file",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  }
+}
