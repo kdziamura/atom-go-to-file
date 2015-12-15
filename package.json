@@ -2,7 +2,7 @@
   "name": "go-to-file",
   "main": "./lib/main",
   "version": "0.1.0",
-  "description": "Jump to file under cursor with `ctrl+alt+p`",
+  "description": "Jump to file under cursor with `ctrl-alt-p`.",
   "keywords": [],
   "activationCommands": {
     "atom-workspace": "go-to-file:toggle"
