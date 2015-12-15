@@ -4,9 +4,8 @@ module.exports =
   goToFileView: null
 
   activate: (state) ->
-    atom.commands.add 'atom-workspace', {
+    atom.commands.add 'atom-workspace',
       'go-to-file:toggle': => @getGoToFileView().toggle()
-    }
 
   getGoToFileView: ->
     unless @goToFileView?

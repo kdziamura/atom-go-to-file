@@ -13,7 +13,7 @@ module.exports = class GoToFileView extends FuzzyFinderView
 
   goToFile: ->
     editor = atom.workspace.getActiveTextEditor()
-    paths = @getPaths(@getPathToSearch editor)
+    paths = @getPaths @getPathToSearch editor
     if paths.length == 1
       @openPath paths[0]
     else if paths.length > 1
@@ -35,9 +35,10 @@ module.exports = class GoToFileView extends FuzzyFinderView
     pathToSearch = null
     selected = editor.getSelectedText()
 
-    if not selected
+    unless selected
       range = editor.bufferRangeForScopeAtCursor '.string.quoted'
-      selected = if range then editor.getTextInBufferRange(range)[1...-1] else null
+      if range
+        selected = editor.getTextInBufferRange(range)[1...-1]
 
     if selected
       currentDir = path.dirname editor.getPath()
@@ -56,7 +57,7 @@ module.exports = class GoToFileView extends FuzzyFinderView
         else if stats.isDirectory()
           paths = @getFilesInDirectory pathToSearch
       catch e
-        paths = @getFilesInDirectory path.dirname(pathToSearch)
+        paths = @getFilesInDirectory path.dirname pathToSearch
         paths = _.filter paths, (fileFullPath) -> _.startsWith fileFullPath, pathToSearch
 
     paths
