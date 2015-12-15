@@ -28,6 +28,10 @@ module.exports =
 
     paths
 
+  getSimilarFilenames: (pathToSearch) ->
+    paths = @getFilesInDirectory path.dirname pathToSearch
+    paths = _.filter paths, (fileFullPath) -> _.startsWith fileFullPath, pathToSearch
+
   getPaths: (pathToSearch) ->
     paths = []
 
@@ -37,7 +41,6 @@ module.exports =
       else if fs.isDirectorySync pathToSearch
         paths = @getFilesInDirectory pathToSearch
       else
-        paths = @getFilesInDirectory path.dirname pathToSearch
-        paths = _.filter paths, (fileFullPath) -> _.startsWith fileFullPath, pathToSearch
+        paths = @getSimilarFilenames pathToSearch
 
     paths
