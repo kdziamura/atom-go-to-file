@@ -1,7 +1,8 @@
 editorHelpers = require 'path'
 helpers = require './go-to-file-helpers'
-packagePath = atom.packages.resolvePackagePath 'fuzzy-finder'
-FuzzyFinderView = require path.join(packagePath, 'lib', 'fuzzy-finder-view')
+FuzzyFinderView = do ->
+  packagePath = atom.packages.resolvePackagePath 'fuzzy-finder'
+  require path.join packagePath, 'lib', 'fuzzy-finder-view'
 
 module.exports = class GoToFileView extends FuzzyFinderView
   toggle: ->
