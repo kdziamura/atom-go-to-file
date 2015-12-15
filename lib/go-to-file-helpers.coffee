@@ -1,4 +1,4 @@
-fs = require 'fs'
+fs = require 'fs-plus'
 path = require 'path'
 _ = require 'lodash'
 
@@ -21,11 +21,10 @@ module.exports =
   getFilesInDirectory: (dirname) ->
     paths = []
 
-    try
+    if fs.isDirectorySync dirname
       paths = fs.readdirSync dirname;
       paths = _.map paths, (filename) -> path.join dirname, filename
-      paths = _.filter paths, (fullPath) -> fs.statSync(fullPath).isFile()
-    catch e
+      paths = _.filter paths, (fullPath) -> fs.isFileSync fullPath
 
     paths
 
@@ -33,13 +32,11 @@ module.exports =
     paths = []
 
     if pathToSearch?
-      try
-        stats = fs.statSync pathToSearch
-        if stats.isFile()
-          paths = [pathToSearch]
-        else if stats.isDirectory()
-          paths = @getFilesInDirectory pathToSearch
-      catch e
+      if fs.isFileSync pathToSearch
+        paths = [pathToSearch]
+      else if fs.isDirectorySync pathToSearch
+        paths = @getFilesInDirectory pathToSearch
+      else
         paths = @getFilesInDirectory path.dirname pathToSearch
         paths = _.filter paths, (fileFullPath) -> _.startsWith fileFullPath, pathToSearch
 
