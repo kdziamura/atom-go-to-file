@@ -1,6 +1,7 @@
 fs = require 'fs'
 path = require 'path'
-packagePath = atom.packages.resolvePackagePath('fuzzy-finder')
+_ = require 'lodash'
+packagePath = atom.packages.resolvePackagePath 'fuzzy-finder'
 FuzzyFinderView = require path.join(packagePath, 'lib', 'fuzzy-finder-view')
 
 module.exports = class GoToFileView extends FuzzyFinderView
@@ -8,50 +9,54 @@ module.exports = class GoToFileView extends FuzzyFinderView
     if @panel?.isVisible()
       @cancel()
     else
-      paths = @getFiles()
-      if paths.length == 1
-        atom.workspace.open paths[0]
-      else if paths.length > 1
-        @setItems paths
-        @show()
+      @goToFile()
 
-  getFilesInDirectory: (dirname, filter) ->
-    fs.readdirSync(dirname)?.reduce (files, filename) ->
-      fullPath = path.join dirname, filename
+  goToFile: ->
+    editor = atom.workspace.getActiveTextEditor()
+    paths = @getPaths(@getPathToSearch editor)
+    if paths.length == 1
+      @openPath paths[0]
+    else if paths.length > 1
+      @setItems paths
+      @show()
 
-      if fs.statSync(fullPath).isFile()
-        if not filter? or filter? fullPath
-          files = files.concat fullPath
+  getFilesInDirectory: (dirname) ->
+    paths = []
 
-      return files
-    , []
+    try
+      paths = fs.readdirSync dirname;
+      paths = _.map paths, (filename) -> path.join dirname, filename
+      paths = _.filter paths, (fullPath) -> fs.statSync(fullPath).isFile()
+    catch e
 
-  getPath: (editor) ->
+    paths
+
+  getPathToSearch: (editor) ->
+    pathToSearch = null
     selected = editor.getSelectedText()
+
     if not selected
       range = editor.bufferRangeForScopeAtCursor '.string.quoted'
       selected = if range then editor.getTextInBufferRange(range)[1...-1] else null
-    selected
 
-  getFiles: ->
-    files = []
-    editor = atom.workspace.getActiveTextEditor()
-    pathToSearch = @getPath editor
+    if selected
+      currentDir = path.dirname editor.getPath()
+      pathToSearch = path.join currentDir, selected
 
-    if not pathToSearch?
-      return files
+    pathToSearch
 
-    currentDir = path.dirname editor.getPath()
-    fullPath =  path.join currentDir, pathToSearch
+  getPaths: (pathToSearch) ->
+    paths = []
 
-    try
-      stats = fs.statSync fullPath
-      if stats.isFile()
-        files = [fullPath]
-      else if stats.isDirectory()
-        files = @getFilesInDirectory fullPath
-    catch e
-      files = @getFilesInDirectory path.dirname(fullPath), (fileFullPath) ->
-        fileFullPath.search(fullPath) != -1
-    finally
-      return files
+    if pathToSearch?
+      try
+        stats = fs.statSync pathToSearch
+        if stats.isFile()
+          paths = [pathToSearch]
+        else if stats.isDirectory()
+          paths = @getFilesInDirectory pathToSearch
+      catch e
+        paths = @getFilesInDirectory path.dirname(pathToSearch)
+        paths = _.filter paths, (fileFullPath) -> _.startsWith fileFullPath, pathToSearch
+
+    paths
