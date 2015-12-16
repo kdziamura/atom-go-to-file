@@ -1,7 +1,7 @@
 {
   "name": "go-to-file",
   "main": "./lib/main",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Jump to the file under the cursor with `ctrl-alt-p`.",
   "keywords": [],
   "activationCommands": {
