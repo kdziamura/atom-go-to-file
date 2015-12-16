@@ -5,6 +5,12 @@ module.exports =
   goToFileView: null
   subscriptions: null
 
+  config:
+    autoOpenSingleResult:
+      default: true
+      type: 'boolean'
+      description: 'Don\'t show list if it is single file in results. Automatically navigate to it.'
+
   activate: (state) ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace',

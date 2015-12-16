@@ -14,8 +14,8 @@ module.exports = class GoToFileView extends FuzzyFinderView
   goToFile: ->
     editor = atom.workspace.getActiveTextEditor()
     paths = helpers.getPaths helpers.getPathToSearch editor
-    if paths.length == 1
+    if paths.length == 1 and atom.config.get 'go-to-file.autoOpenSingleResult'
       @openPath paths[0]
-    else if paths.length > 1
+    else if paths.length != 0
       @setItems paths
       @show()
