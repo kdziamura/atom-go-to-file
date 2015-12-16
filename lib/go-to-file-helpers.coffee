@@ -14,7 +14,7 @@ module.exports =
 
     if selected
       currentDir = path.dirname editor.getPath()
-      pathToSearch = path.join currentDir, selected
+      pathToSearch = path.resolve currentDir, selected
 
     pathToSearch
 
