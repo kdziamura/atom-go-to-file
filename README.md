@@ -1,3 +1,3 @@
-# go-to-file package
+# Go To File package
 
-Go to file under cursor
+Jump to the file under the cursor with `ctrl-alt-p`.
